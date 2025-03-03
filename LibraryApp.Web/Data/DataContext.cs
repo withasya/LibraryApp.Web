@@ -22,8 +22,12 @@ namespace LibraryApp.Web.Data
                 .HasOne(l => l.Books)  // Bir ödünç işlemi bir kitaba aittir
                 .WithMany()  // Kitap birçok ödünç işlemine sahip olabilir
                 .HasForeignKey(l => l.BooksId)  // LoansM tablosundaki BookId'yi kullan
+                .OnDelete(DeleteBehavior.Restrict);            // LoansM ile MembersM arasındaki ilişkiyi kur
+            modelBuilder.Entity<LoansM>()
+                .HasOne(l => l.Members)  // Bir ödünç işlemi bir üyeye aittir
+                .WithMany()  // Üye birçok ödünç işlemine sahip olabilir
+                .HasForeignKey(l => l.MembersId)  // LoansM tablosundaki MemberId'yi kullan
                 .OnDelete(DeleteBehavior.Restrict);
-
+        }
     }
 }
-
