@@ -7,7 +7,22 @@ namespace LibraryApp.Web.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options){}
 
-        public DbSet<BooksM> Books { get; set; }
+        public DbSet<BooksM>Books { get; set; }
+        public DbSet<MembersM>Members { get; set; }
+        public DbSet<LoansM>Loans { get; set; }
+
+
+        // Fluent API ile ilişkiler kurulacak
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // LoansM ile BooksM arasındaki ilişkiyi kur
+            modelBuilder.Entity<LoansM>()
+                .HasOne(l => l.Books)  // Bir ödünç işlemi bir kitaba aittir
+                .WithMany()  // Kitap birçok ödünç işlemine sahip olabilir
+                .HasForeignKey(l => l.BooksId)  // LoansM tablosundaki BookId'yi kullan
+                .OnDelete(DeleteBehavior.Restrict);
 
     }
 }
