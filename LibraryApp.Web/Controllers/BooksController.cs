@@ -8,11 +8,9 @@ using LibraryApp.Web.Profiles;
 namespace LibraryApp.Web.Controllers
 {
 
-
-
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController : ControllerBase  // Düzeltme: ':' yerine ' : ' kullanıldı
+    public class BooksController : ControllerBase
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -54,19 +52,39 @@ namespace LibraryApp.Web.Controllers
             // Kitap bulunmazsa
             if (existingBook == null)
             {
-                return BadRequest("Kitap Bulunamadı");
+                return NotFound("Kitap Bulunamadı"); // 404 döndür
             }
 
             // AutoMapper kullanarak existingBook'u güncelle
             _mapper.Map(updatedBook, existingBook);  // updatedBook'tan existingBook'a veri kopyalanacak
 
-            _context.SaveChanges();  // Düzeltme: SaveChanges burada çağrılmalı
+            _context.SaveChanges();  // Güncellemeleri kaydet
 
             return Ok(existingBook);
         }
 
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBook(int id)
+        {
+            // Kitap ID'ye göre veritabanında aranır
+            var bookToDelete = _context.Books.FirstOrDefault(b => b.Id == id);
+
+            // Kitap bulunamazsa 404 Not Found döndürülür
+            if (bookToDelete == null)
+            {
+                return BadRequest("Kitap Bulunamadı");
+            }
+
+            // Kitap bulunursa silinir
+            _context.Books.Remove(bookToDelete);
+
+            _context.SaveChanges();
+
+            // Başarıyla silindiğinde NoContent (204) döner
+            return NoContent();
+        }
+
+
     }
-
-
 }
 

@@ -10,6 +10,8 @@ namespace LibraryApp.Web.Profiles
             // BooksM türü için kopyalama yapılacak
             // BooksM'den BooksM'ye kopyalama
             CreateMap<BooksM, BooksM>();
+            CreateMap<BooksM, BooksM>().ForMember(dest => dest.Id, opt => opt.Ignore());
+
         }
     }
 }
