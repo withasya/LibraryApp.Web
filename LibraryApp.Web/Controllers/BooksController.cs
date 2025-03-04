@@ -31,7 +31,6 @@ namespace LibraryApp.Web.Controllers
             return Ok(bookList);                        // 200 OK ile geri döndür
         }
 
-
         [HttpPost]
         public IActionResult AddBook([FromBody] BooksM newBook)
         {
@@ -46,8 +45,7 @@ namespace LibraryApp.Web.Controllers
             return CreatedAtAction(nameof(GetAllBooks), new { id = newBook.Id }, newBook);
         }
 
-
-        [HttpPut]
+        [HttpPut("{id}")]
         public IActionResult UpdateBook(int id, [FromBody] BooksM updatedBook)
         {
             // Kitabı ID'ye göre bulalım
