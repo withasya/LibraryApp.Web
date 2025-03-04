@@ -1,12 +1,15 @@
 using LibraryApp.Web.Data;
+using AutoMapper;
+using LibraryApp.Web.Profiles;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddDbContext <DataContext>(options =>
+builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// AutoMapper'ı DI container'a ekleyin
+builder.Services.AddAutoMapper(typeof(MappingProfile)); // Profilin bulunduğu türü ekliyoruz
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

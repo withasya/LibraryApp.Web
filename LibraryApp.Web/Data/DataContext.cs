@@ -3,10 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryApp.Web.Data
 {
-    public class DataContext:DbContext
+    public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options){}
-
         public DbSet<BooksM>Books { get; set; }
         public DbSet<MembersM>Members { get; set; }
         public DbSet<LoansM>Loans { get; set; }
