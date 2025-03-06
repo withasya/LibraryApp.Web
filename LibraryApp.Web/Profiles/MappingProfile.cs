@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LibraryApp.Web.Dtos;
 using LibraryApp.Web.Models;
 
 namespace LibraryApp.Web.Profiles
@@ -12,6 +13,10 @@ namespace LibraryApp.Web.Profiles
             CreateMap<BooksM, BooksM>();
             CreateMap<BooksM, BooksM>().ForMember(dest => dest.Id, opt => opt.Ignore());
 
+
+            // Üye eşlemeleri (Yeni ekledik)
+            CreateMap<MemberDto, MembersM>();
+            CreateMap<MembersM, MemberDto>();
         }
     }
 }
