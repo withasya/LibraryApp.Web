@@ -9,7 +9,6 @@ namespace LibraryApp.Web.Data
         public DbSet<MembersM>Members { get; set; }
         public DbSet<LoansM>Loans { get; set; }
 
-
         // Fluent API ile ilişkiler kurulacak
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
