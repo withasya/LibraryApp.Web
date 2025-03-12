@@ -9,6 +9,12 @@ namespace LibraryApp.Web.Data
         public DbSet<MembersM> Members { get; set; }
         public DbSet<LoansM> Loans { get; set; }
 
+        // Lazy Loading Aktif!
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies(); 
+        }
+
         // Fluent API ile ilişkiler kurulacak
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

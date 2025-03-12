@@ -5,6 +5,7 @@ using LibraryApp.Web.Dtos;
 using MicrosoftAppBuilder = Microsoft.AspNetCore.Builder.IApplicationBuilder;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LibraryApp.Web.Controllers
 {
@@ -62,7 +63,7 @@ namespace LibraryApp.Web.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LoansM>>> GetAllLoans()
         {
-
+            //eager loading örneğidir (istekli yükleme)
             var loans = await _context.Loans
                 .Include(l => l.Books)
                 .Include(l => l.Members)
@@ -75,6 +76,7 @@ namespace LibraryApp.Web.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLoan(int id)
         {
+            //lazy loading örneğidir sadece loans tablosu verisi gelir eğer istersek diğer tablolar için yeni dorgu gerekir
             var loan = await _context.Loans.FindAsync(id);
             if (loan == null)
                 return NotFound("bu id bulunamadı");
@@ -110,5 +112,65 @@ namespace LibraryApp.Web.Controllers
 
             return Ok(deletedLoan);
         }
+
+
+
+        //TESTLER
+
+        [HttpGet("test-loan")]
+        public IActionResult TestLazyLoading([FromServices] DataContext _context)
+        {
+            var loan = _context.Loans.FirstOrDefault(); // İlk Loans kaydını alıyoruz
+
+            if (loan == null)
+            {
+                return NotFound("Loans tablosunda kayıt bulunamadı.");
+            }
+
+            return Ok(new
+            {
+                LoanID = loan.Id,
+                Book = loan.Books?.Title, // Eğer Lazy Loading çalışıyorsa, burası otomatik dolar!
+                Member = loan.Members?.Name // Lazy Loading aktifse, üye bilgisi de gelir.
+            });
+        }
+
+        //lazy test
+        [HttpGet("lazy-loans")]
+        public async Task<ActionResult<IEnumerable<LoansM>>> GetAllLoansLazy()
+        {
+            var loans = await _context.Loans.ToListAsync(); // İlişkili verileri çağırmıyoruz
+
+            // Kitap ve üye bilgileri ilk aşamada yüklenmez, Lazy Loading devreye girecek
+            return Ok(loans);
+        }
+
+        //eager test
+        [HttpGet("eager-loans")]
+        public async Task<ActionResult<IEnumerable<LoansM>>> GetAllLoan()
+        {
+            var loans = await _context.Loans
+                .Include(l => l.Books)   // Kitapları baştan yükle
+                .Include(l => l.Members) // Üyeleri baştan yükle
+                .ToListAsync();
+
+            return Ok(loans);
+        }
+
+        //As no tracking eager
+        //Eğer veriler üzerinde değişiklik yapacaksanız, AsNoTracking kullanamazsınız çünkü:SaveChanges, değişiklikleri kaydetmek için izleme gerektirir.
+        [HttpGet("eager-loans-no-tracking")]
+        public async Task<ActionResult<IEnumerable<LoansM>>> GetAllLoansNoTracking()
+        {
+            var loans = await _context.Loans
+                .AsNoTracking() // Veriyi takip etme, sadece oku!
+                .Include(l => l.Books)
+                .Include(l => l.Members)
+                .ToListAsync();
+
+            return Ok(loans);
+        }
+
+
     }
 }

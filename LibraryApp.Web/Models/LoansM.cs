@@ -15,11 +15,13 @@ namespace LibraryApp.Web.Models
         [ForeignKey("Members")]
         public int MembersId { get; set; }  // Hangi üye aldı?
 
+
+
         // Kitap ve Üye ilişkisi (Navigation Property) - NULL OLAMAZ
 
-        public BooksM? Books { get; set; } // Navigation property
+        public virtual BooksM? Books { get; set; } //lazy loading için virtual ekledik
 
 
-        public MembersM? Members { get; set; } // Navigation property
+        public virtual MembersM? Members { get; set; } 
     }
 }
