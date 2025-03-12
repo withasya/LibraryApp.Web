@@ -4,6 +4,7 @@ using LibraryApp.Web.Models;
 using LibraryApp.Web.Dtos;
 using MicrosoftAppBuilder = Microsoft.AspNetCore.Builder.IApplicationBuilder;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace LibraryApp.Web.Controllers
 {
@@ -12,10 +13,13 @@ namespace LibraryApp.Web.Controllers
     public class LoansController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper; // AutoMapper enjekte edildi
 
-        public LoansController(DataContext context)
+        // Constructor ile IMapper'ı enjekte ediyoruz
+        public LoansController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper; // Burada 'mapper' ifadesi doğru olmalı, IMapper interface'i üzerinden alıyoruz
         }
 
         [HttpPost]
@@ -79,18 +83,19 @@ namespace LibraryApp.Web.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateLoan(int id, [FromBody] LoansM updatedLoan)
+        public async Task<IActionResult> UpdateLoan(int id, [FromBody] LoanDto updatedLoanDto)
         {
             var existingLoan = await _context.Loans.FindAsync(id);
 
             if (existingLoan == null) return NotFound("Bu ID'ye ait ödünç kaydı bulunamadı.");
 
-            existingLoan.BooksId = updatedLoan.BooksId;
-            existingLoan.MembersId = updatedLoan.MembersId;
+            // AutoMapper kullanarak LoanDTO'yu mevcut Loan modeline dönüştürüyoruz
+            _mapper.Map(updatedLoanDto, existingLoan);
 
             await _context.SaveChangesAsync();
             return Ok(existingLoan);
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLoan(int id)

@@ -17,6 +17,10 @@ namespace LibraryApp.Web.Profiles
             // Üye eşlemeleri (Yeni ekledik)
             CreateMap<MemberDto, MembersM>();
             CreateMap<MembersM, MemberDto>();
+
+            // Loan eşlemeleri
+            CreateMap<LoansM, LoanDto>(); // LoansM'den LoanDTO'ya
+            CreateMap<LoanDto, LoansM>(); // LoanDTO'dan LoansM'ye
         }
     }
 }
