@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LibraryApp.Web.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,8 +48,7 @@ namespace LibraryApp.Web.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     BooksId = table.Column<int>(type: "integer", nullable: false),
-                    MembersId = table.Column<int>(type: "integer", nullable: false),
-                    MembersMId = table.Column<int>(type: "integer", nullable: true)
+                    MembersId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,11 +65,6 @@ namespace LibraryApp.Web.Migrations
                         principalTable: "Members",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Loans_Members_MembersMId",
-                        column: x => x.MembersMId,
-                        principalTable: "Members",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -82,11 +76,6 @@ namespace LibraryApp.Web.Migrations
                 name: "IX_Loans_MembersId",
                 table: "Loans",
                 column: "MembersId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Loans_MembersMId",
-                table: "Loans",
-                column: "MembersMId");
         }
 
         /// <inheritdoc />

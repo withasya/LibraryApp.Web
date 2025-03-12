@@ -5,9 +5,9 @@ namespace LibraryApp.Web.Data
 {
     public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
     {
-        public DbSet<BooksM>Books { get; set; }
-        public DbSet<MembersM>Members { get; set; }
-        public DbSet<LoansM>Loans { get; set; }
+        public DbSet<BooksM> Books { get; set; }
+        public DbSet<MembersM> Members { get; set; }
+        public DbSet<LoansM> Loans { get; set; }
 
         // Fluent API ile ilişkiler kurulacak
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -18,12 +18,14 @@ namespace LibraryApp.Web.Data
             modelBuilder.Entity<LoansM>()
                 .HasOne(l => l.Books)  // Bir ödünç işlemi bir kitaba aittir
                 .WithMany()  // Kitap birçok ödünç işlemine sahip olabilir
-                .HasForeignKey(l => l.BooksId)  // LoansM tablosundaki BookId'yi kullan
-                .OnDelete(DeleteBehavior.Restrict);            // LoansM ile MembersM arasındaki ilişkiyi kur
+                .HasForeignKey(l => l.BooksId)  // LoansM tablosundaki BooksId'yi kullan
+                .OnDelete(DeleteBehavior.Restrict); // Silme davranışı
+
+            // LoansM ile MembersM arasındaki ilişkiyi kur
             modelBuilder.Entity<LoansM>()
                 .HasOne(l => l.Members)  // Bir ödünç işlemi bir üyeye aittir
-                .WithMany()  // Üye birçok ödünç işlemine sahip olabilir
-                .HasForeignKey(l => l.MembersId)  // LoansM tablosundaki MemberId'yi kullan
+                .WithMany(m => m.Loans)  // Üye birçok ödünç işlemine sahip olabilir
+                .HasForeignKey(l => l.MembersId)  // LoansM tablosundaki MembersId'yi kullan
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

@@ -62,16 +62,11 @@ namespace LibraryApp.Web.Migrations
                     b.Property<int>("MembersId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MembersMId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BooksId");
 
                     b.HasIndex("MembersId");
-
-                    b.HasIndex("MembersMId");
 
                     b.ToTable("Loans");
                 });
@@ -106,14 +101,10 @@ namespace LibraryApp.Web.Migrations
                         .IsRequired();
 
                     b.HasOne("LibraryApp.Web.Models.MembersM", "Members")
-                        .WithMany()
+                        .WithMany("Loans")
                         .HasForeignKey("MembersId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("LibraryApp.Web.Models.MembersM", null)
-                        .WithMany("Loans")
-                        .HasForeignKey("MembersMId");
 
                     b.Navigation("Books");
 

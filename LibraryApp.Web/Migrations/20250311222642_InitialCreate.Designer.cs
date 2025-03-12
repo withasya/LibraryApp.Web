@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LibraryApp.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250303192223_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250311222642_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,16 +65,11 @@ namespace LibraryApp.Web.Migrations
                     b.Property<int>("MembersId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MembersMId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BooksId");
 
                     b.HasIndex("MembersId");
-
-                    b.HasIndex("MembersMId");
 
                     b.ToTable("Loans");
                 });
@@ -109,14 +104,10 @@ namespace LibraryApp.Web.Migrations
                         .IsRequired();
 
                     b.HasOne("LibraryApp.Web.Models.MembersM", "Members")
-                        .WithMany()
+                        .WithMany("Loans")
                         .HasForeignKey("MembersId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("LibraryApp.Web.Models.MembersM", null)
-                        .WithMany("Loans")
-                        .HasForeignKey("MembersMId");
 
                     b.Navigation("Books");
 
