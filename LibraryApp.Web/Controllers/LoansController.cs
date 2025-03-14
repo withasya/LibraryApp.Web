@@ -6,6 +6,7 @@ using MicrosoftAppBuilder = Microsoft.AspNetCore.Builder.IApplicationBuilder;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Extensions.Logging;
 
 namespace LibraryApp.Web.Controllers
 {
@@ -15,12 +16,14 @@ namespace LibraryApp.Web.Controllers
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper; // AutoMapper enjekte edildi
+        private readonly ILogger<LoansController> _logger;
 
         // Constructor ile IMapper'ı enjekte ediyoruz
-        public LoansController(DataContext context, IMapper mapper)
+        public LoansController(DataContext context, IMapper mapper, ILogger<LoansController> logger)
         {
             _context = context;
             _mapper = mapper; // Burada 'mapper' ifadesi doğru olmalı, IMapper interface'i üzerinden alıyoruz
+            _logger = logger;
         }
 
         [HttpPost]
@@ -98,14 +101,13 @@ namespace LibraryApp.Web.Controllers
             return Ok(existingLoan);
         }
 
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLoan(int id)
         {
-            var deletedLoan =await _context.Loans.FindAsync(id);
+            var deletedLoan = await _context.Loans.FindAsync(id);
 
             if (deletedLoan == null) return NotFound("Bu ID'ye ait ödünç kaydı bulunamadı.");
-        
+
 
             _context.Loans.Remove(deletedLoan);
             await _context.SaveChangesAsync();
@@ -172,5 +174,43 @@ namespace LibraryApp.Web.Controllers
         }
 
 
+
+
+        //LINQ SORGULARI
+        [HttpGet("index")]
+        public IActionResult Index()
+        {
+            var result = _context.Books
+                                 .Select(book => book.Title)
+                                 .ToList();
+
+            // Loglama ile başlıkları yazdırma
+            foreach (var title in result)
+            {
+                _logger.LogInformation($"Kitap Başlığı: {title}");
+            }
+
+            return Ok(result);
+        }
+
+
+        [HttpGet("index1")]
+        public IActionResult Index1()
+            {
+             var result = _context.Loans
+                                     .Join(_context.Books, loan => loan.BooksId, book => book.Id, (loan, book) => new { loan.Id, book.Title })
+                                     .Join(_context.Members, loanBook => loanBook.Id, member => member.Id, (loanBook, member) => new { loanBook.Id, loanBook.Title, member.Name })
+                                     .ToList();
+
+                // Console'a yazdırma
+                foreach (var item in result)
+                {
+                    Console.WriteLine($"Loan ID: {item.Id}, Book Title: {item.Title}, Member Name: {item.Name}");
+                }
+
+                return Ok(result);  // İsteğe bağlı, API üzerinden sonuç dönebilirsiniz
+            }
+
+
+        }
     }
-}

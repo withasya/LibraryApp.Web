@@ -7,7 +7,7 @@
         public required string Email { get; set; }  // E-posta
 
         // Bir üyenin birden fazla ödünç alımı olabilir
-        public virtual ICollection<LoansM> Loans { get; set; } = new List<LoansM>();
+        public virtual ICollection<LoansM> Loans { get; set; } = [];
 
     }
 }
